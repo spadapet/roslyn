@@ -81,6 +81,7 @@ internal static class BrokeredServiceDescriptors
         CreateDebuggerServiceDescriptor("SymbolLocatorService", new Version(0, 1), new MultiplexingStream.Options { ProtocolMajorVersion = 3 });
     public static readonly ServiceRpcDescriptor DebuggerSourceLinkService =
         CreateDebuggerServiceDescriptor("SourceLinkService", new Version(0, 1), new MultiplexingStream.Options { ProtocolMajorVersion = 3 });
+    public static readonly ServiceRpcDescriptor CssVisualDiagnosticsService = CreateWebToolsServiceDescriptor("CssVisualDiagnosticsService", new Version(0, 1));
 
     public static ServiceMoniker CreateMoniker(string namespaceName, string componentName, string serviceName, Version? version)
         => new(namespaceName + "." + componentName + "." + serviceName, version);
@@ -110,6 +111,13 @@ internal static class BrokeredServiceDescriptors
     public static ServiceJsonRpcDescriptor CreateDebuggerClientServiceDescriptor(string serviceName, Version? version = null)
         => new ClientServiceDescriptor(CreateMoniker(VisualStudioComponentNamespace, DebuggerComponentName, serviceName, version), clientInterface: null)
            .WithExceptionStrategy(ExceptionProcessing.ISerializable);
+
+    /// <summary>
+    /// Descriptor for services proferred by the WebTools component (implemented in C#). 
+    /// </summary>
+    public static ServiceJsonRpcDescriptor CreateWebToolsServiceDescriptor(string serviceName, Version? version = null)
+        => CreateDescriptor(CreateMoniker(VisualStudioComponentNamespace, "WebTools", serviceName, version),
+            new MultiplexingStream.Options { ProtocolMajorVersion = 3 });
 
     /// <summary>
     /// Descriptor for services proferred by the MAUI extension (implemented in TypeScript).
